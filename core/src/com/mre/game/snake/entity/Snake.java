@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.mre.game.snake.SnakeGame;
+import com.mre.game.snake.screen.PlayScreen;
 
 public class Snake {
 
@@ -15,11 +16,14 @@ public class Snake {
     private DIRECTON currentDir;
     private static final float speed = 5f;
 
-    Array<Sprite> body;
-    Texture texture;
-    float timeToMove;
+    private final PlayScreen screen;
 
-    public Snake(Texture texture) {
+    private Array<Sprite> body;
+    private Texture texture;
+    private float timeToMove;
+
+    public Snake(Texture texture, PlayScreen screen) {
+        this.screen = screen;
         this.texture = texture;
         body = new Array<Sprite>();
         Sprite sprite = new Sprite(texture);
@@ -75,7 +79,19 @@ public class Snake {
             Sprite head = body.get(0);
             Rectangle headPos = head.getBoundingRectangle();
             headPos.x += 32 / SnakeGame.PPM * coefficientX;
+            if (headPos.x + headPos.width > screen.getViewport().getWorldWidth() * 0.5f) {
+                headPos.x = -screen.getViewport().getWorldWidth() * 0.5f;
+            }
+            else if (headPos.x < -screen.getViewport().getWorldWidth() * 0.5f) {
+                headPos.x = screen.getViewport().getWorldWidth() * 0.5f - headPos.width;
+            }
             headPos.y += 32 / SnakeGame.PPM * coefficientY;
+            if (headPos.y + headPos.height > screen.getViewport().getWorldHeight() * 0.5f) {
+                headPos.y = -screen.getViewport().getWorldWidth() * 0.5f;
+            }
+            else if (headPos.y < -screen.getViewport().getWorldHeight() * 0.5f) {
+                headPos.y = screen.getViewport().getWorldWidth() * 0.5f - headPos.height;
+            }
             head.setPosition(headPos.x, headPos.y);
         }
     }
@@ -112,6 +128,17 @@ public class Snake {
     public boolean collidesWith(Rectangle rect) {
         for (Sprite sp : body) {
             if (sp.getBoundingRectangle().overlaps(rect)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean collidesWithSelf() {
+        Rectangle head = body.get(0).getBoundingRectangle();
+        for (int i = 1; i < body.size; i++) {
+            Sprite sp = body.get(i);
+            if (sp.getBoundingRectangle().overlaps(head)) {
                 return true;
             }
         }

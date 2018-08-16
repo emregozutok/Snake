@@ -26,14 +26,14 @@ public class PlayScreen extends ScreenAdapter {
     private Apple apple;
 
     public PlayScreen() {
-        this.game = (SnakeGame) Gdx.app.getApplicationListener();;
+        this.game = (SnakeGame) Gdx.app.getApplicationListener();
         this.batch = game.getBatch();
 
         this.cam = new OrthographicCamera();
         this.viewport = new FitViewport(SnakeGame.WORLD_WIDTH, SnakeGame.WORLD_HEIGHT, cam);
 
         this.snakeTexture = new Texture("body.png");
-        this.snake = new Snake(snakeTexture);
+        this.snake = new Snake(snakeTexture, this);
         this.appleTexture = new Texture("apple.png");
         Rectangle rect = getRandomWorldRect();
         this.apple = new Apple(appleTexture, rect.x, rect.y);
@@ -83,12 +83,15 @@ public class PlayScreen extends ScreenAdapter {
 
     private void update(float dt) {
         snake.update(dt);
+        if (snake.collidesWithSelf()) {
+            game.setScreen(new GameOverScreen());
+            dispose();
+        }
         if (snake.checkAppleCollision(apple.getBoundingRectangle())) {
             snake.grow();
             Rectangle rect = getRandomWorldRect();
             apple.setPosition(rect.x, rect.y);
         }
-        cam.update();
     }
 
     private void draw() {
@@ -99,6 +102,10 @@ public class PlayScreen extends ScreenAdapter {
         snake.draw(batch);
         apple.draw(batch);
         batch.end();
+    }
+
+    public Viewport getViewport() {
+        return viewport;
     }
 
     @Override
