@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mre.game.snake.screen.GameOverScreen;
+import com.mre.game.snake.screen.MenuScreen;
 import com.mre.game.snake.screen.PlayScreen;
 
 public class SnakeGame extends Game {
@@ -18,7 +19,8 @@ public class SnakeGame extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		setScreen(new PlayScreen());
+		setScreen(new MenuScreen());
+		// setScreen(new PlayScreen());
 		// setScreen(new GameOverScreen());
 	}
 
